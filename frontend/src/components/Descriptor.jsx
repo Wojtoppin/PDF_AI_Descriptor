@@ -3,12 +3,14 @@ import PDFTable from "./PDFTable";
 export default function Descriptor() {
   const FileInput = useRef();
   const [files, setFiles] = useState([]);
-  
-  // const updateDescription = (id, newDescription){
 
-  //   setFiles((prevFiles)=> ({...prevFiles, [id]:))
-  // }
-
+  const updateDescription = (index, newDescription) => {
+    setFiles((prevFiles) => {
+      const updatedFiles = { ...prevFiles };
+      updatedFiles[index].description = newDescription;
+      return updatedFiles;
+    });
+  }
 
   const handleFileChange = (e, action) => {
     const selectedFiles = Array.from(e.target.files);
@@ -51,10 +53,10 @@ export default function Descriptor() {
         className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
       ></input>
       {Object.values(files).length > 0 && (
-        <PDFTable files={files}>
+        <PDFTable files={files} updateDescription={updateDescription}>
           <tr>
             <td
-              colSpan={3}
+              colSpan={4}
               className="border border-t-0 border-gray-300 px-5 py-4 bg-white text-right"
             >
               <button
