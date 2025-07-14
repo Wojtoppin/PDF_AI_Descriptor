@@ -12,7 +12,8 @@ export default function Descriptor() {
     });
   }
 
-  const handleFileChange = (e, action) => {
+  const handleFileChange = (action, e={},fileName="") => {
+    if (action !=="delete"){
     const selectedFiles = Array.from(e.target.files);
     const filesObject = selectedFiles.reduce((acc, file) => {
       const id = `${file.lastModified}-${file.name}`;
@@ -31,9 +32,15 @@ export default function Descriptor() {
         ...prevFiles,
         ...filesObject,
       }));
+    }} else {
+      setFiles((prevFiles) => {
+        const updatedFiles = { ...prevFiles };
+        delete updatedFiles[fileName];
+        return updatedFiles;
+      });
     }
   };
-  console.log(Object.values(files));
+  
 
   const handleAddFilesButtonClicked = (e) => {
     e.preventDefault();
@@ -49,11 +56,11 @@ export default function Descriptor() {
       <input
         type="file"
         multiple
-        onChange={(e) => handleFileChange(e, "select")}
+        onChange={(e) => handleFileChange("select", e)}
         className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
       ></input>
       {Object.values(files).length > 0 && (
-        <PDFTable files={files} updateDescription={updateDescription}>
+        <PDFTable files={files} handleDelete={handleFileChange} updateDescription={updateDescription}>
           <tr>
             <td
               colSpan={4}
@@ -69,7 +76,7 @@ export default function Descriptor() {
                 type="file"
                 ref={FileInput}
                 multiple
-                onChange={(e) => handleFileChange(e, "add")}
+                onChange={(e) => handleFileChange("add",e)}
                 className="hidden"
               />
             </td>
