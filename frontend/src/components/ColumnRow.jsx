@@ -49,7 +49,7 @@ export default function ColumnRow({
       updateDescription(`${fileValue.lastModified}-${name}`, "Generating new description...");
       handleSubmit(fileValue, updateDescription);
     } else if (tooltip === "Delete") {
-      handleDelete("Delete", name);
+      handleDelete("delete",{},`${fileValue.lastModified}-${name}`);
     }
   };
 
@@ -65,7 +65,7 @@ export default function ColumnRow({
                 e.target.value
               )
             }
-            className="w-full h-fit"
+            className="w-full h-24 p-2 border border-gray-300 rounded"
             value={description}
           />
         ) : (

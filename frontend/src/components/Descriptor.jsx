@@ -61,11 +61,7 @@ export default function Descriptor() {
       ></input>
       {Object.values(files).length > 0 && (
         <PDFTable files={files} handleDelete={handleFileChange} updateDescription={updateDescription}>
-          <tr>
-            <td
-              colSpan={4}
-              className="border border-t-0 border-gray-300 px-5 py-4 bg-white text-right"
-            >
+          
               <button
                 className="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
                 onClick={handleAddFilesButtonClicked}
@@ -79,8 +75,6 @@ export default function Descriptor() {
                 onChange={(e) => handleFileChange("add",e)}
                 className="hidden"
               />
-            </td>
-          </tr>
         </PDFTable>
       )}
     </div>

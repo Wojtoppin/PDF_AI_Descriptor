@@ -1,6 +1,11 @@
 import ColumnRow from "./ColumnRow";
 
-export default function PDFTable({ files, children, updateDescription, handleDelete }) {
+export default function PDFTable({
+  files,
+  children,
+  updateDescription,
+  handleDelete,
+}) {
   return (
     <table className="mt-6 w-full border border-gray-300 rounded-lg shadow-sm overflow-hidden">
       <thead className="bg-gray-100 text-left text-sm font-semibold text-gray-700">
@@ -18,7 +23,7 @@ export default function PDFTable({ files, children, updateDescription, handleDel
       <tbody className="text-sm text-gray-800">
         {Object.values(files).map(({ name, description, fileValue }, index) => (
           <ColumnRow
-          handleDelete={handleDelete}
+            handleDelete={handleDelete}
             updateDescription={updateDescription}
             name={name}
             description={description}
@@ -26,17 +31,31 @@ export default function PDFTable({ files, children, updateDescription, handleDel
             index={index}
           />
         ))}
-        {children}
+        
       </tbody>
       <tfoot className="bg-gray-50 text-sm font-medium text-gray-700">
         <tr>
-          <td  className="border border-gray-300 bg-gray-100  px-5 py-3">
+          <td className="border border-gray-300 bg-gray-100  px-5 py-3">
             Statistics
           </td>
-          <td colSpan={3} className="border flex items-center space-x-1.5 border-gray-300 px-5 py-3">
-            <span>Total files: {Object.values(files).length}</span>
-            <span>Total size: {console.log(files)}</span>
+          <td
+            colSpan={2}
+            className="border text-center space-x-1.5 border-gray-300 px-5 py-3"
+          >
+            <span>Total files count: {Object.keys(files).length}</span>
+            <span>
+              Total size:{" "}
+              {(
+                Object.values(files).reduce((acc, fileObj) => {
+                  return acc + (fileObj.fileValue?.size || 0);
+                }, 0) /
+                (1024 * 1024)
+              ).toFixed(2)} MB
+            </span>
             <span></span>
+          </td>
+          <td>
+          {children}
           </td>
         </tr>
       </tfoot>
