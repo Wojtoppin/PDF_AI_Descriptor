@@ -39,7 +39,6 @@ export default function PDFTable({
             Statistics
           </td>
           <td
-            colSpan={2}
             className="border text-center space-x-1.5 border-gray-300 px-5 py-3"
           >
             <span>Total files count: {Object.keys(files).length}</span>
@@ -54,7 +53,8 @@ export default function PDFTable({
             </span>
             <span></span>
           </td>
-          <td>
+          <td 
+            colSpan={2}>
           {children}
           </td>
         </tr>

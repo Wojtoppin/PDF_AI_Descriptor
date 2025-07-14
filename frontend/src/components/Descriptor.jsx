@@ -63,7 +63,7 @@ export default function Descriptor() {
         <PDFTable files={files} handleDelete={handleFileChange} updateDescription={updateDescription}>
           
               <button
-                className="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                className=" w-[calc(100%-16px)] h-full bg-blue-600 text-white mx-2 my-2 px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
                 onClick={handleAddFilesButtonClicked}
               >
                 + Add More Files

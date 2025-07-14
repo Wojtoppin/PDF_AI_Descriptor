@@ -69,7 +69,7 @@ export default function ColumnRow({
             value={description}
           />
         ) : (
-          <span className="w-full h-full">{description}</span>
+          <span className="w-full h-full whitespace-pre-wrap">{description}</span>
         )}
       </td>
 

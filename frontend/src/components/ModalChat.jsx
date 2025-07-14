@@ -2,7 +2,7 @@ import { forwardRef, useState } from "react";
 
 const ModalChat = forwardRef(({ file }, ref) => {
   const [messages, setMessages] = useState([
-    { sender: "ai", text: "Cześć! Co byś chciał wiedzieć o tym pliku" },
+    { sender: "ai", text: "Cześć! Co byś chciał wiedzieć o tym pliku?" },
   ]);
   const [input, setInput] = useState("");
 
