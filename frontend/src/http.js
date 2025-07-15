@@ -20,3 +20,16 @@ export async function sendPdfToSummaryApi(fileValue) {
     return { error: error.message };
   }
 }
+
+export async function askQuestion(chatId, question) {
+  const formData = new FormData();
+  formData.append("chat_id", chatId);
+  formData.append("question", question);
+
+  const response = await fetch("http://127.0.0.1:8000/ask/", {
+    method: "POST",
+    body: formData,
+  });
+
+  return await response.json();
+}

@@ -10,20 +10,48 @@ import Icon from "./Icon.jsx";
 const handleSubmit = async (fileValue, updateDescription) => {
   console.log("Fetching summary for file:", fileValue.name);
 
-  // if (fileValue) {
-  //   const result = await sendPdfToSummaryApi(fileValue);
-  //   const message =
-  //     result?.choices?.[0]?.message?.content ||
-  //     result?.error ||
-  //     "Brak odpowiedzi.";
-  //   const slicedMessage = message.slice(4);
-  //   updateDescription(
-  //     `${fileValue.lastModified}-${fileValue.name}`,
-  //     slicedMessage
-  //   );
-  //   console.log("Summary received:", slicedMessage);
-  // }
+  if (fileValue) {
+    const result = await sendPdfToSummaryApi(fileValue);
+    const message =
+      result?.choices?.[0]?.message?.content ||
+      result?.error ||
+      "Brak odpowiedzi.";
+    const slicedMessage = message.slice(4);
+    updateDescription(
+      `${fileValue.lastModified}-${fileValue.name}`,
+      slicedMessage
+    );
+  }
 };
+
+const uploadFile = async (fileValue, updateChatId) => {
+  if (!fileValue) return;
+
+  const formData = new FormData();
+  formData.append("file", fileValue);
+
+  try {
+    const response = await fetch("http://127.0.0.1:8000/upload/", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Błąd serwera: ${response.status}`);
+    }
+
+    const result = await response.json();
+    const chatId = result.chat_id;
+
+    if (!chatId) throw new Error("Brak chat_id w odpowiedzi");
+
+    // Przekaż chatId do komponentu nadrzędnego, np. by zapisać go dla tego pliku
+    updateChatId(chatId);
+    console.log("chat_id otrzymany:", chatId);
+  } catch (error) {
+    console.error("Błąd podczas przesyłania pliku:", error);
+  }
+}
 
 export default function ColumnRow({
   name,
@@ -35,8 +63,9 @@ export default function ColumnRow({
 }) {
   const chatbotRef = useRef();
   const [isEditing, setIsEditing] = useState(false);
-
+  const [chatId, setChatId] = useState("")
   useEffect(() => {
+    uploadFile(fileValue,setChatId)
     handleSubmit(fileValue,updateDescription);
   }, []);
 
@@ -86,7 +115,7 @@ export default function ColumnRow({
             ref={chatbotRef}
             clickHandler={clickHandler}
           />
-          <ModalChat ref={chatbotRef} file={fileValue} />
+          <ModalChat ref={chatbotRef} file={fileValue} chatId={chatId}/>
         </div>
       </td>
 

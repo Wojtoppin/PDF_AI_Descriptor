@@ -21,11 +21,10 @@ def summarize_pdf(pdf_path):
     text = extract_text_from_pdf(pdf_path)[:MAX_CHARS]
 
     prompt = (
-        "Przeanalizuj poniższy dokument i wypisz jego streszczenie w maksymalnie 3 zdaniach. "
+        "Przeanalizuj poniższy dokument i wypisz jego krótkie streszczenie w maksymalnie 2 zdaniach po Polsku. "
         "Używaj języka formalnego i jasnego. Unikaj kopiowania treści, skup się na istocie dokumentu.\n\n"
         f"DOKUMENT:\n{text}"
     )
-    print(prompt[:1000])
 
     payload = {
         "model": MODEL,

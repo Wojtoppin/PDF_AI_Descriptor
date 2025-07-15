@@ -1,21 +1,31 @@
 import { forwardRef, useState } from "react";
+import { askQuestion } from "../http.js";
 
-const ModalChat = forwardRef(({ file }, ref) => {
+const ModalChat = forwardRef(({ chatId, file }, ref) => {
   const [messages, setMessages] = useState([
     { sender: "ai", text: "Cześć! Co byś chciał wiedzieć o tym pliku?" },
   ]);
   const [input, setInput] = useState("");
-
-  const handleSend = () => {
+  const [loading, setLoading] = useState(false);
+  console.log(chatId)
+  const handleSend = async () => {
     if (!input.trim()) return;
 
-    setMessages((prev) => [
-      ...prev,
-      { sender: "user", text: input },
-      { sender: "ai", text: "This is a placeholder response from the AI." },
-    ]);
-
+    const userMessage = input;
+    setMessages((prev) => [...prev, { sender: "user", text: userMessage }]);
     setInput("");
+    setLoading(true);
+
+    try {
+      const response = await askQuestion(chatId, userMessage);
+      console.log(response)
+      const aiResponse = response?.choices?.[0]?.message?.content || "Brak odpowiedzi od AI.";
+      setMessages((prev) => [...prev, { sender: "ai", text: aiResponse }]);
+    } catch (err) {
+      setMessages((prev) => [...prev, { sender: "ai", text: "Wystąpił błąd po stronie serwera." }]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -42,9 +52,7 @@ const ModalChat = forwardRef(({ file }, ref) => {
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            className={`flex ${
-              msg.sender === "user" ? "justify-end" : "justify-start"
-            }`}
+            className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
               className={`max-w-xs px-4 py-2 rounded-lg text-sm ${
@@ -57,13 +65,16 @@ const ModalChat = forwardRef(({ file }, ref) => {
             </div>
           </div>
         ))}
+        {loading && (
+          <div className="text-sm text-gray-500">AI pisze odpowiedź...</div>
+        )}
       </div>
 
       {/* Input Area */}
       <div className="border-t border-gray-200 px-4 py-3 bg-gray-50 flex items-center gap-2">
         <input
           type="text"
-          placeholder="Type your message..."
+          placeholder="Zadaj pytanie dotyczące dokumentu..."
           className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -73,7 +84,7 @@ const ModalChat = forwardRef(({ file }, ref) => {
           onClick={handleSend}
           className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
         >
-          Send
+          Wyślij
         </button>
       </div>
     </dialog>
