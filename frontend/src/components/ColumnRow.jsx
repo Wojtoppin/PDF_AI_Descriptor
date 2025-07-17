@@ -6,6 +6,7 @@ import ModalChat from "./ModalChat";
 import { useEffect, useRef, useState } from "react";
 import { sendPdfToSummaryApi } from "../http.js";
 import Icon from "./Icon.jsx";
+const API_BASE = "http://{IP}:8000";
 
 const handleSubmit = async (fileValue, updateDescription) => {
   console.log("Fetching summary for file:", fileValue.name);
@@ -31,7 +32,7 @@ const uploadFile = async (fileValue, updateChatId) => {
   formData.append("file", fileValue);
 
   try {
-    const response = await fetch("http://127.0.0.1:8000/upload/", {
+    const response = await fetch(`${API_BASE}/upload/`, {
       method: "POST",
       body: formData,
     });
