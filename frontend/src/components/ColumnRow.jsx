@@ -8,7 +8,6 @@ import { sendPdfToSummaryApi } from "../http.js";
 import Icon from "./Icon.jsx";
 
 const handleSubmit = async (fileValue, updateDescription) => {
-  console.log("Fetching summary for file:", fileValue.name);
 
   if (fileValue) {
     const result = await sendPdfToSummaryApi(fileValue);
@@ -47,7 +46,6 @@ const uploadFile = async (fileValue, updateChatId) => {
 
     // Przekaż chatId do komponentu nadrzędnego, np. by zapisać go dla tego pliku
     updateChatId(chatId);
-    console.log("chat_id otrzymany:", chatId);
   } catch (error) {
     console.error("Błąd podczas przesyłania pliku:", error);
   }

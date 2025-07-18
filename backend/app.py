@@ -40,7 +40,6 @@ async def upload_pdf(file: UploadFile = File(...)):
     text = extract_text_from_pdf(tmp_path)
     chat_id = str(uuid.uuid4())
     store_document(chat_id, text)
-
     return {"chat_id": chat_id}
 
 @app.post("/ask/")
@@ -50,9 +49,9 @@ async def ask_question(chat_id: str = Form(...), question: str = Form(...)):
         return {"error": "Nie znaleziono dokumentu o podanym ID."}
 
     prompt = (
-        f"Poniżej znajduje się treść dokumentu:\n{text}\n\n"
-        f"Odpowiedz na pytanie:\n{question}"
-    )
+    f"Poniżej znajduje się treść dokumentu:\n{text[:6000]}\n\n"
+    f"Odpowiedz na pytanie w jak najkrótszy sposób, maksymalnie 2 zdania. Pytanie:\n{question}"
+)
 
     payload = {
         "model": MODEL,

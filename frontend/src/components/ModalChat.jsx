@@ -7,7 +7,6 @@ const ModalChat = forwardRef(({ chatId, file }, ref) => {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  console.log(chatId)
   const handleSend = async () => {
     if (!input.trim()) return;
 
@@ -18,7 +17,6 @@ const ModalChat = forwardRef(({ chatId, file }, ref) => {
 
     try {
       const response = await askQuestion(chatId, userMessage);
-      console.log(response)
       const aiResponse = response?.choices?.[0]?.message?.content || "Brak odpowiedzi od AI.";
       setMessages((prev) => [...prev, { sender: "ai", text: aiResponse }]);
     } catch (err) {
