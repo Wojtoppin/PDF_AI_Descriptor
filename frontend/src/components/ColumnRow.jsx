@@ -7,9 +7,15 @@ import { useEffect, useRef, useState } from "react";
 import { sendPdfToSummaryApi } from "../http.js";
 import Icon from "./Icon.jsx";
 
-const handleSubmit = async (fileValue, updateDescription) => {
 
+
+const htmlLoading = <div class="loader"></div>;
+const handleSubmit = async (fileValue, updateDescription) => {
   if (fileValue) {
+    updateDescription(
+      `${fileValue.lastModified}-${fileValue.name}`,
+      htmlLoading
+    );
     const result = await sendPdfToSummaryApi(fileValue);
     const message =
       result?.choices?.[0]?.message?.content ||
