@@ -1,26 +1,25 @@
 import { forwardRef, useState } from "react";
 import { askQuestion } from "../http.js";
 
-const ModalChat = forwardRef(({ chatId, file }, ref) => {
-  const [messages, setMessages] = useState([
-    { sender: "ai", text: "Cześć! Co byś chciał wiedzieć o tym pliku?" },
-  ]);
+const ModalChat = forwardRef(({ chatId, file, updateMessages, index, messages}, ref) => {
+
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+
   const handleSend = async () => {
     if (!input.trim()) return;
 
     const userMessage = input;
-    setMessages((prev) => [...prev, { sender: "user", text: userMessage }]);
+    updateMessages(index,{ sender: "user", text: userMessage });
     setInput("");
     setLoading(true);
 
     try {
       const response = await askQuestion(chatId, userMessage);
-      const aiResponse = response?.choices?.[0]?.message?.content || "Brak odpowiedzi od AI.";
-      setMessages((prev) => [...prev, { sender: "ai", text: aiResponse }]);
+      const aiResponse = response?.choices?.[0]?.message?.content.slice(4) || "Brak odpowiedzi od AI.";
+      updateMessages(index,{ sender: "ai", text: aiResponse });
     } catch (err) {
-      setMessages((prev) => [...prev, { sender: "ai", text: "Wystąpił błąd po stronie serwera." }]);
+      updateMessages(index,{ sender: "ai", text: "Wystąpił błąd po stronie serwera." });
     } finally {
       setLoading(false);
     }

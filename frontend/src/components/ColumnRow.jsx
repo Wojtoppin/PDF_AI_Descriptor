@@ -9,7 +9,7 @@ import Icon from "./Icon.jsx";
 
 
 
-const htmlLoading = <div class="loader"></div>;
+const htmlLoading = <div className="loader"></div>;
 const handleSubmit = async (fileValue, updateDescription) => {
   if (fileValue) {
     updateDescription(
@@ -59,9 +59,11 @@ const uploadFile = async (fileValue, updateChatId) => {
 
 export default function ColumnRow({
   name,
+  key,
+  messages,
   description,
   fileValue,
-  index,
+  updateMessages,
   updateDescription,
   handleDelete,
 }) {
@@ -79,7 +81,8 @@ export default function ColumnRow({
     } else if (tooltip === "Edit") {
       setIsEditing((prevValue) => !prevValue);
     } else if (tooltip === "Reimagine") {
-      updateDescription(`${fileValue.lastModified}-${name}`, "Generating new description...");
+      setIsEditing(false);
+      updateDescription(`${fileValue.lastModified}-${name}`, htmlLoading);
       handleSubmit(fileValue, updateDescription);
     } else if (tooltip === "Delete") {
       handleDelete("delete",{},`${fileValue.lastModified}-${name}`);
@@ -87,7 +90,7 @@ export default function ColumnRow({
   };
 
   return (
-    <tr key={index} className="hover:bg-gray-50 transition-colors">
+    <tr key={key} className="hover:bg-gray-50 transition-colors">
       <td className="border border-gray-300 px-5 py-3">{name}</td>
       <td className="border border-gray-300 px-5 py-3">
         {isEditing ? (
@@ -119,7 +122,7 @@ export default function ColumnRow({
             ref={chatbotRef}
             clickHandler={clickHandler}
           />
-          <ModalChat ref={chatbotRef} file={fileValue} chatId={chatId}/>
+          <ModalChat ref={chatbotRef} messages={messages} updateMessages={updateMessages} index={`${fileValue.lastModified}-${name}`} chatId={chatId}/>
         </div>
       </td>
 
