@@ -1,4 +1,4 @@
-export default function Footer() {
+export default function Footer({language}) {
   return (
     <footer className="w-full bg-gray-100 mt-auto border-t border-gray-300 shadow-inner">
       <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-600">
@@ -8,7 +8,7 @@ export default function Footer() {
         </div>
 
         <div className="text-center sm:text-right">
-          © {new Date().getFullYear()} Stronę napisał:{" "}
+          © {new Date().getFullYear()}{language === "en" ? " Made by: " : " Stronę napisał: "}
           <a
             href="https://github.com/Wojtoppin"
             target="_blank"
