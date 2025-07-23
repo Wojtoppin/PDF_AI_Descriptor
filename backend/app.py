@@ -1,23 +1,60 @@
 from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 import tempfile
 import uuid
-from helper import extract_text_from_pdf, summarize_pdf
-from storage.memory import store_document, get_document
+import os
+import sys
+import webbrowser
+import threading
+import time
 import requests
 
+from helper import extract_text_from_pdf, summarize_pdf
+from storage.memory import store_document, get_document
+
+# === Config ===
 API_URL = "http://localhost:1234/v1/chat/completions"
 MODEL = "bielik-7b-instruct-v0.1"
 
+# === Handle PyInstaller Paths ===
+def get_base_path():
+    if getattr(sys, 'frozen', False):  # PyInstaller bundle
+        return sys._MEIPASS
+    return os.path.dirname(os.path.abspath(__file__))
+
+BASE_PATH = get_base_path()
+
+# === Auto-open Browser ===
+def open_browser():
+    time.sleep(2)  # Wait for FastAPI to start
+    webbrowser.open("http://localhost:5173")
+
+threading.Thread(target=open_browser).start()
+
+# === FastAPI App Setup ===
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["*"],  # You can restrict this in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# === Serve Static Files (React App) ===
+static_dir = os.path.join(BASE_PATH, "frontend", "dist", "assets")
+index_file = os.path.join(BASE_PATH, "frontend", "dist", "index.html")
+
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+@app.get("/")
+def serve_index():
+    return FileResponse(index_file)
+
+# === API Routes ===
 
 @app.post("/summary/")
 async def upload_and_summarize(file: UploadFile = File(...)):
@@ -49,9 +86,9 @@ async def ask_question(chat_id: str = Form(...), question: str = Form(...)):
         return {"error": "Nie znaleziono dokumentu o podanym ID."}
 
     prompt = (
-    f"Poniżej znajduje się treść dokumentu:\n{text[:6000]}\n\n"
-    f"Odpowiedz na pytanie w jak najkrótszy sposób, maksymalnie 2 zdania. Pytanie:\n{question}"
-)
+        f"Poniżej znajduje się treść dokumentu:\n{text[:12000]}\n\n"
+        f"Odpowiedz na pytanie w jak najkrótszy sposób, maksymalnie 2 zdania. Pytanie:\n{question}"
+    )
 
     payload = {
         "model": MODEL,
