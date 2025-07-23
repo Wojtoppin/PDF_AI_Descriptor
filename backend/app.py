@@ -26,12 +26,6 @@ def get_base_path():
 
 BASE_PATH = get_base_path()
 
-# === Auto-open Browser ===
-def open_browser():
-    time.sleep(2)  # Wait for FastAPI to start
-    webbrowser.open("http://localhost:5173")
-
-threading.Thread(target=open_browser).start()
 
 # === FastAPI App Setup ===
 app = FastAPI()
@@ -47,6 +41,13 @@ app.add_middleware(
 # === Serve Static Files (React App) ===
 static_dir = os.path.join(BASE_PATH, "frontend", "dist", "assets")
 index_file = os.path.join(BASE_PATH, "frontend", "dist", "index.html")
+
+# === Auto-open Browser ===
+def open_browser():
+    time.sleep(2)  # Wait for FastAPI to start
+    webbrowser.open("http://localhost:8000")
+
+threading.Thread(target=open_browser).start()
 
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
