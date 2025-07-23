@@ -4,7 +4,7 @@ import re
 
 API_URL = "http://localhost:1234/v1/chat/completions"
 MODEL = "bielik-7b-instruct-v0.1"
-MAX_CHARS = 8000
+MAX_CHARS = 12000
 
 def clean_text(text):
     text = re.sub(r'\s+', ' ', text)

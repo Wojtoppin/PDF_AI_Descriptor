@@ -4,7 +4,7 @@ import { jsPDF } from "jspdf";
 import { handleExport } from "./handleExport.js";
 // Import the exported function from your font file
 import { registerFonts } from "../fonts/fonts.js";
-export default function Descriptor({language}) {
+export default function Descriptor({ language }) {
   const FileInput = useRef();
   const [files, setFiles] = useState({});
 
@@ -16,7 +16,6 @@ export default function Descriptor({language}) {
         if (file.messages && file.messages.length > 0) {
           file.messages = [
             {
-              
               ...file.messages[0],
               text:
                 lang === "en"
@@ -31,10 +30,11 @@ export default function Descriptor({language}) {
       });
       return updatedFiles;
     });
-  }
+  };
 
-  useEffect(() => {updateLanguage}, [language]);
-  
+  useEffect(() => {
+    updateLanguage;
+  }, [language]);
 
   useEffect(() => {
     registerFonts(jsPDF.API);
@@ -81,9 +81,7 @@ export default function Descriptor({language}) {
         return acc;
       }, {});
 
-      if (action === "select") {
-        setFiles(filesObject);
-      } else if (action === "add") {
+      if (action === "add") {
         setFiles((prevFiles) => ({
           ...prevFiles,
           ...filesObject,
@@ -117,12 +115,19 @@ export default function Descriptor({language}) {
           ? "Upload a PDF file to get started."
           : "Prześlij plik PDF aby rozpocząć."}
       </p>
+      <button
+        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        onClick={handleAddFilesButtonClicked}
+      >
+        {language === "en" ? "Select Files" : "Wybierz pliki"}
+      </button>
       <input
         type="file"
+        ref={FileInput}
         multiple
-        onChange={(e) => handleFileChange("select", e)}
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      ></input>
+        onChange={(e) => handleFileChange("add", e)}
+        className="hidden"
+      />
       {Object.values(files).length > 0 && (
         <PDFTable
           files={files}
@@ -137,13 +142,6 @@ export default function Descriptor({language}) {
           >
             {language === "en" ? "+ Add More Files" : "+ Dodaj Więcej Plików"}
           </button>
-          <input
-            type="file"
-            ref={FileInput}
-            multiple
-            onChange={(e) => handleFileChange("add", e)}
-            className="hidden"
-          />
         </PDFTable>
       )}
       {Object.keys(files).length > 0 && (
@@ -152,7 +150,6 @@ export default function Descriptor({language}) {
           className="bg-green-700 float-right text-white text-l px-4 py-2 my-4 mr-2 rounded hover:bg-green-800"
         >
           {language === "en" ? "Export to PDF" : "Eksportuj do PDF"}
-          
         </button>
       )}
     </div>

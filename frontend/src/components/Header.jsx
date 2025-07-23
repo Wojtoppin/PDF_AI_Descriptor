@@ -6,7 +6,7 @@ export default function Header({language, updateLanguage}) {
       <h1 className="text-2xl font-bold text-center w-fit">Wielik</h1>
       <nav className=" mt-0">
         <ul className="flex space-x-4">
-          <li><a href="/" className="hover:underline">Description</a></li>
+          <li><a href="/" className="hover:underline">{language === "en" ? "Description" : "Streszczenie"}</a></li>
           <li className={language==="pl"?cssSelected:cssLanguage} onClick={()=>updateLanguage("pl")}>Polski</li>
           <li className={language==="en"?cssSelected:cssLanguage} onClick={()=>updateLanguage("en")}>English</li>
         </ul>
