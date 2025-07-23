@@ -4,62 +4,11 @@ import regenerate from "../assets/regenerate.png";
 import deleteIMG from "../assets/delete.png";
 import ModalChat from "./ModalChat";
 import { useEffect, useRef, useState } from "react";
-import { sendPdfToSummaryApi } from "../http.js";
+import { uploadFile, handleSubmit, htmlLoading } from "./ColumnRowFunctions.jsx";
 import Icon from "./Icon.jsx";
-
-
-
-const htmlLoading = <div className="loader"></div>;
-const handleSubmit = async (fileValue, updateDescription) => {
-  if (fileValue) {
-    updateDescription(
-      `${fileValue.lastModified}-${fileValue.name}`,
-      htmlLoading
-    );
-    const result = await sendPdfToSummaryApi(fileValue);
-    const message =
-      result?.choices?.[0]?.message?.content ||
-      result?.error ||
-      "Brak odpowiedzi.";
-    const slicedMessage = message.slice(4);
-    updateDescription(
-      `${fileValue.lastModified}-${fileValue.name}`,
-      slicedMessage
-    );
-  }
-};
-
-const uploadFile = async (fileValue, updateChatId) => {
-  if (!fileValue) return;
-
-  const formData = new FormData();
-  formData.append("file", fileValue);
-
-  try {
-    const response = await fetch("http://127.0.0.1:8000/upload/", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error(`Błąd serwera: ${response.status}`);
-    }
-
-    const result = await response.json();
-    const chatId = result.chat_id;
-
-    if (!chatId) throw new Error("Brak chat_id w odpowiedzi");
-
-    // Przekaż chatId do komponentu nadrzędnego, np. by zapisać go dla tego pliku
-    updateChatId(chatId);
-  } catch (error) {
-    console.error("Błąd podczas przesyłania pliku:", error);
-  }
-}
 
 export default function ColumnRow({
   name,
-  key,
   messages,
   description,
   fileValue,
@@ -69,10 +18,10 @@ export default function ColumnRow({
 }) {
   const chatbotRef = useRef();
   const [isEditing, setIsEditing] = useState(false);
-  const [chatId, setChatId] = useState("")
+  const [chatId, setChatId] = useState("");
   useEffect(() => {
-    uploadFile(fileValue,setChatId)
-    handleSubmit(fileValue,updateDescription);
+    uploadFile(fileValue, setChatId);
+    handleSubmit(fileValue, updateDescription);
   }, []);
 
   const clickHandler = (tooltip) => {
@@ -85,12 +34,12 @@ export default function ColumnRow({
       updateDescription(`${fileValue.lastModified}-${name}`, htmlLoading);
       handleSubmit(fileValue, updateDescription);
     } else if (tooltip === "Delete") {
-      handleDelete("delete",{},`${fileValue.lastModified}-${name}`);
+      handleDelete("delete", {}, `${fileValue.lastModified}-${name}`);
     }
   };
 
   return (
-    <tr key={key} className="hover:bg-gray-50 transition-colors">
+    <tr key={`${fileValue.lastModified}-${name}`} className="hover:bg-gray-50 transition-colors">
       <td className="border border-gray-300 px-5 py-3">{name}</td>
       <td className="border border-gray-300 px-5 py-3">
         {isEditing ? (
@@ -105,7 +54,9 @@ export default function ColumnRow({
             value={description}
           />
         ) : (
-          <span className="w-full h-full whitespace-pre-wrap">{description}</span>
+          <span className="w-full h-full whitespace-pre-wrap">
+            {description}
+          </span>
         )}
       </td>
 
@@ -122,7 +73,13 @@ export default function ColumnRow({
             ref={chatbotRef}
             clickHandler={clickHandler}
           />
-          <ModalChat ref={chatbotRef} messages={messages} updateMessages={updateMessages} index={`${fileValue.lastModified}-${name}`} chatId={chatId}/>
+          <ModalChat
+            ref={chatbotRef}
+            messages={messages}
+            updateMessages={updateMessages}
+            index={`${fileValue.lastModified}-${name}`}
+            chatId={chatId}
+          />
         </div>
       </td>
 

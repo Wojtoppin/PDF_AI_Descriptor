@@ -24,7 +24,6 @@ export default function PDFTable({
       <tbody className="text-sm text-gray-800">
         {Object.values(files).map(({ name, description, fileValue, messages }, index) => (
           <ColumnRow
-            key={index}
             messages={messages}
             updateMessages={updateMessages}
             handleDelete={handleDelete}
