@@ -2,6 +2,7 @@ import ColumnRow from "./ColumnRow";
 
 export default function PDFTable({
   files,
+  language,
   children,
   updateMessages,
   updateDescription,
@@ -12,13 +13,14 @@ export default function PDFTable({
       <thead className="bg-gray-100 text-left text-sm font-semibold text-gray-700">
         <tr>
           <th className="border border-gray-300 px-5 py-3 w-[15%]">
-            File Name
+            {language === "en" ? "File Name" : "Nazwa Pliku"}
+            
           </th>
           <th className="border border-gray-300 px-5 py-3 w-[69%]">
-            Description
+            {language === "en" ? "Description" : "Opis"}
           </th>
           <th className="border border-gray-300 px-5 py-3 w-[8%]">AI</th>
-          <th className="border border-gray-300 px-5 py-3 w-[8%]">Action</th>
+          <th className="border border-gray-300 px-5 py-3 w-[8%]">{language === "en" ? "Action" : "Działania"}</th>
         </tr>
       </thead>
       <tbody className="text-sm text-gray-800">
@@ -37,12 +39,12 @@ export default function PDFTable({
       <tfoot className="bg-gray-50 text-sm font-medium text-gray-700">
         <tr>
           <td className="border border-gray-300 bg-gray-100  px-5 py-3">
-            Statistics
+            {language === "en" ? "Statistics" : "Statystyki"}
           </td>
-          <td className="border text-center space-x-1.5 border-gray-300 px-5 py-3">
-            <span>Total files count: {Object.keys(files).length}</span>
+          <td className="border text-center space-x-5 border-gray-300 px-5 py-3">
+            <span>{language === "en" ? "Total files count: " : "Łączna ilość plików: "} {Object.keys(files).length}</span>
             <span>
-              Total size:{" "}
+              {language === "en" ? "Total size: " : "Łączny rozmiar: "}
               {(
                 Object.values(files).reduce((acc, fileObj) => {
                   return acc + (fileObj.fileValue?.size || 0);
